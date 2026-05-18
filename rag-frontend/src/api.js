@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'http://127.0.0.1:8000';
 
 export const getApiResponse = async (question, sessionId, model) => {
   const data = { question, model, ...(sessionId && { session_id: sessionId }) };

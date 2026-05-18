@@ -5,7 +5,7 @@ import { listDocuments } from './api';
 
 function App() {
   // Global states (Replacing st.session_state)
-  const [model, setModel] = useState('gpt-4o');
+  const [model, setModel] = useState('llama-3.1-8b-instant');
   const [sessionId, setSessionId] = useState(null);
   const [documents, setDocuments] = useState([]);
 

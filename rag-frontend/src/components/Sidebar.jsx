@@ -43,8 +43,8 @@ const Sidebar = ({ model, setModel, documents, fetchDocs }) => {
           onChange={(e) => setModel(e.target.value)}
           className="w-full p-2 border rounded"
         >
-          <option value="gpt-4o">gpt-4o</option>
-          <option value="gpt-4o-mini">gpt-4o-mini</option>
+          {/* <option value="gpt-4o">gpt-4o</option> */}
+          <option value="llama-3.1-8b-instant">LLaMA 3.1 8B Instant</option>
         </select>
       </div>
 
