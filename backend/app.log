@@ -693,3 +693,64 @@ INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "H
 INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
 INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
 INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: None, User Query: hi , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: fac97101-4b7e-4ca3-b493-65796fcd7e36, AI Response: Hello. How can I assist you today? Would you like to know more about the system interface or is there something specific you'd like to ask?
+INFO:root:Session ID: fac97101-4b7e-4ca3-b493-65796fcd7e36, User Query: what is this Draft SRS.docx is all about ? , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: fac97101-4b7e-4ca3-b493-65796fcd7e36, AI Response: It appears that you've shared a document called "Draft SRS.docx", which likely stands for Software Requirements Specification. 
+
+Based on the context you provided earlier, it seems to be related to the high-level system workflow of a project that involves storing vectors, retrieving relevant content, and generating answers using SentenceTransformers and other technologies.
+
+The SRS document would typically outline the functional and non-functional requirements of the system, including features, user interactions, data storage, and performance expectations.
+
+Without having access to the actual document, I can make an educated guess that it might cover the following topics:
+
+1. System overview and scope
+2. Functional requirements (e.g., extracting text from PDF/DOCX, generating embeddings, storing vectors in a database)
+3. Non-functional requirements (e.g., performance, security, usability)
+4. System architecture and components (e.g., databases, APIs, LLM models)
+5. Input and output formats (e.g., data types, file formats)
+6. User interaction and interfaces (e.g., admin/teacher, student)
+
+If you'd like to know more about a specific aspect of the SRS document or have any other questions, feel free to ask!
+INFO:root:Session ID: None, User Query: how can i assign students to this ? , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 0a7f08c8-f8bb-4cb5-935b-46a0f4370053, AI Response: To assign students to this system, you would follow the path from F to G, and then from H to I. Here's a step-by-step breakdown:
+
+1. F --> G[Store in Vector Database with Metadata] (store user metadata)
+2. G --> H{User Type} (determine user type)
+3. H --> I[Student] (if user type is a student)
+
+Once the system has identified the user as a student, you can proceed with assigning them to specific tasks or activities. Here are a few possible scenarios:
+
+- Ask Learning Question (K): You can allow students to ask learning questions by selecting the "Ask Learning Question" (K) option. This will prompt the system to retrieve relevant chunks (L), generate a grounded answer (M), and display the answer with source references (N).
+- Receive Suggested Follow-up Questions (O): After receiving an answer, students can be presented with suggested follow-up questions (O) to encourage deeper learning and exploration.
+- Access Teacher-generated Resources (R): Depending on the system's configuration, students may be able to access teacher-generated resources, such as lesson plans (R), marking schemes (T), or student answers (U).
+
+To assign students to these tasks or activities, you can implement a user interface that allows them to navigate the system and select the options that are relevant to their needs. This could be in the form of a menu, a dashboard, or a series of prompts that guide them through the process.
+
+Here's an example of how the student interface might look:
+
+* Welcome to the Learning Platform!
+* Please select an activity:
+ + Ask a learning question
+ + View teacher-generated resources
+ + Explore suggested follow-up questions
+* (students select an activity, and the system responds accordingly)
+
+Keep in mind that this is just one possible approach, and the specifics will depend on the design and functionality of your system.
+INFO:root:Session ID: 0a7f08c8-f8bb-4cb5-935b-46a0f4370053, User Query: who is the president of sri lanka, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 0a7f08c8-f8bb-4cb5-935b-46a0f4370053, AI Response: As my knowledge cutoff is December 2023, I can tell you that the President of Sri Lanka as of my knowledge cutoff is Ranil Wickremesinghe. However, please note that this information may have changed since my knowledge cutoff date.
+
+Ranil Wickremesinghe became the President of Sri Lanka on July 13, 2022, after being appointed as the Acting President following the resignation of Gotabaya Rajapaksa. He was subsequently elected as the President of Sri Lanka by the Sri Lankan Parliament on July 20, 2022.
+
+Please note that my information may not be up to date, and I recommend verifying the current President of Sri Lanka through a more recent source.
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
