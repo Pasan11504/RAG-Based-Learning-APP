@@ -596,3 +596,100 @@ Traceback (most recent call last):
     version = _bcrypt.__about__.__version__
               ^^^^^^^^^^^^^^^^^
 AttributeError: module 'bcrypt' has no attribute '__about__'
+INFO:root:Session ID: None, User Query: hi whatsapp, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: c479f90f-4a13-4ca4-b09b-40dffea6c04f, AI Response: I'm not capable of sending or receiving WhatsApp messages, but I can chat with you here. You were in the context of discussing a centralized API Gateway, Campus Link - University Social Platform, Smart Research Assistant – Google Chrome Extension and related technologies. What would you like to talk about?
+INFO:root:Session ID: c479f90f-4a13-4ca4-b09b-40dffea6c04f, User Query: what is this all about, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: c479f90f-4a13-4ca4-b09b-40dffea6c04f, AI Response: You started with a question "Explain photosynthesis in simple Sinhala for Grade 8" which implies you are looking for educational content. However, it seems the context was cut off.
+
+To clarify, I'm a chatbot designed to help students with their learning. I can provide information on various subjects such as science, math, and more. I also have the ability to generate lesson plans for teachers.
+
+Let's start fresh. What would you like to talk about? Do you have a specific subject or topic in mind that you'd like to learn more about?
+INFO:root:Session ID: None, User Query: hi, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: fe7ab7f3-9080-4e41-9e1e-d5427890b5f5, AI Response: Hello. I'm here to help you with any questions or concerns you may have. What would you like to know about the system interface we've been discussing?
+INFO:root:Session ID: None, User Query: hi, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 840a1407-4882-4ea2-aaa6-3af5982a1746, AI Response: It seems you're interacting with a system interface, possibly the one described in the context about a JSON Parser. If you have any questions or need help with anything related to this system, feel free to ask, and I'll do my best to assist you.
+INFO:root:Session ID: None, User Query: hi what is this all about ? , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 2b48f678-a647-49fe-b208-db33bd5b3ad2, AI Response: It appears to be a document related to a technical project, specifically a JSON (JavaScript Object Notation) parser. The context mentions "B.1 System Interface" and a "Main interactive dashboard" built with Streamlit UI.
+
+Streamlit is a Python library used for building web-based user interfaces for data science and machine learning applications. So, it seems that the project involves creating a user-friendly interface to parse and validate JSON data.
+
+The document also mentions a dashboard with an input area and validation metrics, which suggests that the project allows users to input JSON data and then displays metrics or results related to the validation process.
+
+If you're new to this project, it might be helpful to know that JSON is a lightweight data interchange format that's widely used in web development and data exchange. A JSON parser is a tool that helps to validate and process JSON data, ensuring it's in the correct format and structure.
+
+Is there anything specific you'd like to know about this project or JSON parsing in general?
+INFO:root:Session ID: 2b48f678-a647-49fe-b208-db33bd5b3ad2, User Query: who is the president of sri lanka, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 2b48f678-a647-49fe-b208-db33bd5b3ad2, AI Response: As my knowledge was cut off in 2023, I don't have real-time information about the current president of Sri Lanka. However, according to my knowledge cutoff in 2023, the President of Sri Lanka was Ranil Wickremesinghe.
+
+Please note that this information may not be up-to-date as my knowledge cutoff is in 2023. For the most recent and accurate information, I recommend checking a reliable news source or official government website.
+
+Now, if you'd like to learn more about the president of Sri Lanka or the country's history, I'd be happy to help with that!
+INFO:root:Session ID: None, User Query: what is this draft is all about ? , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: ce9956f4-1fd8-4fc4-afaf-c69be66f534d, AI Response: This draft is a Software Requirements Specification (SRS) for a project titled "AI-Based RAG Education Assistant for Secondary School Students and Teachers". The main objective of this project is to develop a Python-based AI education tool that supports various functionalities for teachers and students, including self-learning, lesson plan generation, question generation, automatic answer marking, and revision support.
+
+The system utilizes Retrieval-Augmented Generation (RAG) to enable the Large Language Model (LLM) to answer questions using uploaded school learning materials, rather than relying solely on its general knowledge.
+
+The draft outlines the main users of the system, including:
+
+1. Admin: responsible for managing users, uploaded resources, and system settings.
+2. Teacher: uses the system for teaching-aid preparation, lesson plan generation, and question generation.
+3. Student: uses the system for self-learning, question generation, and revision support.
+
+The draft provides a detailed overview of the system's requirements, including user roles, functionality, and technical specifications.
+INFO:root:Session ID: ce9956f4-1fd8-4fc4-afaf-c69be66f534d, User Query: who is the president of united states of america, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: ce9956f4-1fd8-4fc4-afaf-c69be66f534d, AI Response: I'm a large language model, I do not have have access to real-time information or current events. However, I can suggest some possible ways to find the answer to your question.
+
+You can check the official website of the White House (whitehouse.gov) or the website of the Office of the President of the United States (president.gov) to find the latest information about the current President of the United States.
+
+If you are looking for a historical answer, I can try to provide you with the list of past Presidents of the United States.
+INFO:root:Session ID: ce9956f4-1fd8-4fc4-afaf-c69be66f534d, User Query: will donald trump be the president again ? WHAT  are the odds ? , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: ce9956f4-1fd8-4fc4-afaf-c69be66f534d, AI Response: I'll provide you with some context and available information, but please note that predicting future events or election outcomes is inherently uncertain.
+
+Donald Trump, the 45th President of the United States, has announced his intention to run for the presidency again in the 2024 election. However, the outcome of the election will depend on various factors, including the performance of other candidates, voter turnout, and the overall political landscape.
+
+As for the odds, they are constantly changing and can be influenced by various events and developments. Here are some general odds and predictions from reputable sources:
+
+1. **Odds of winning the Republican nomination:** According to PredictIt, a website that provides odds on various events, Donald Trump has an approximate 70-80% chance of winning the Republican nomination.
+2. **Odds of winning the presidency:** PredictIt also provides odds on the outcome of the 2024 presidential election. As of my knowledge cutoff, Donald Trump has an approximate 30-40% chance of winning the presidency.
+3. **Other candidates:** Some potential candidates, such as Joe Biden (Democratic) and Ron DeSantis (Republican), have also expressed interest in running for the presidency. The odds of these candidates winning the election will depend on various factors, including their campaign performance and voter preferences.
+
+Keep in mind that these odds are subject to change and should be taken as a general guide rather than a prediction. The 2024 election will be influenced by many factors, including voter sentiment, economic conditions, and global events.
+
+Here are some reliable sources for tracking election odds and predictions:
+
+* PredictIt (predictit.org)
+* FiveThirtyEight (fivethirtyeight.com)
+* RealClearPolitics (realclearpolitics.com)
+* Cook Political Report (cookpoliticalreport.com)
+
+Please note that these sources provide general guidance and should not be taken as investment advice or a definitive prediction of the outcome.
+INFO:root:Session ID: None, User Query: hi, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 81be6831-dfb2-44b9-8e01-83633ebabee9, AI Response: It seems like you're trying to interact with a system interface, possibly related to a JSON Parser. I'd be happy to help you with any questions or issues you're facing. Could you please provide more context or specify what you'd like to know or achieve with this interface?
+ERROR:root:Lesson plan generation failed: name 'generate_textbook_lesson_plan' is not defined
+INFO:root:Session ID: None, User Query: hi, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 9f8ba3ed-0074-429f-b0e3-8fdd2d401b59, AI Response: How can I assist you today? Would you like to know more about the B.1 System Interface or perhaps explore how it works with the JSON Parser?
+ERROR:root:Lesson plan generation failed: name 'generate_textbook_lesson_plan' is not defined
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: None, User Query: hi, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 199da3b9-efc9-41a7-a622-9a5c206104a9, AI Response: It seems like you're interacting with a JSON Parser system (based on the context). How can I assist you today? Do you have any questions about the system's interface, functions, or features?
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"

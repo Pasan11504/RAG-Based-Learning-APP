@@ -63,3 +63,28 @@ class UserProfileResponse(BaseModel):
     subject: Optional[str] = None
     school: Optional[str] = None
     preferred_language: str
+
+
+# Add to the very bottom of app/pydantic_models.py
+
+class LessonPlanRequest(BaseModel):
+    file_id: int
+    topic: str
+    duration_minutes: Optional[int] = Field(default=40, ge=10, le=120)
+
+
+# Add to the very bottom of app/pydantic_models.py
+
+class QuizGenerationRequest(BaseModel):
+    file_id: int
+    question_type: str  # E.g., "MCQ", "Short Answer", "Essay"
+    num_questions: Optional[int] = Field(default=3, ge=1, le=10)
+
+
+# Add to the very bottom of app/pydantic_models.py
+
+class EvaluationRequest(BaseModel):
+    question_text: str
+    model_answer: str
+    student_answer: str
+    max_marks: int

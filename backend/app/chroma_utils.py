@@ -48,3 +48,5 @@ def delete_doc_from_chroma(file_id: int):
     except Exception as e:
         print(f"Error deleting document with file_id {file_id} from Chroma: {str(e)}")
         return False
+
+

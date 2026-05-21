@@ -34,7 +34,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     """Generates a secure signed JSON Web Token (JWT) containing user identity details."""
     to_encode = data.copy()
     
-    # Force 'sub' to be a string to satisfy standard OAuth2 specifications cleanly
     if "sub" in to_encode:
         to_encode["sub"] = str(to_encode["sub"])
         
@@ -48,10 +47,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return encoded_jwt
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Security(security_bearer)) -> Dict[str, Any]:
-    """
-    FastAPI dependency that extracts, decodes, and validates a JWT token.
-    Returns a dictionary containing the active user's identity details.
-    """
+    """FastAPI dependency that extracts, decodes, and validates a JWT token."""
     token = credentials.credentials
     credentials_exception = HTTPException(
         status_code=401,
@@ -61,7 +57,6 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Security(securi
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         
-        # Safely read string field and cast back to an operational integer ID
         raw_sub = payload.get("sub")
         if raw_sub is None:
             raise credentials_exception

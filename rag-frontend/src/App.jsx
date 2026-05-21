@@ -60,7 +60,7 @@ function App() {
     setUserProfile(null);
     setIsAuthenticated(false);
     setSessionId(null);
-    setMessages([]);
+    // setMessages([]);
   };
 
   if (!isAuthenticated) {
@@ -110,3 +110,6 @@ function App() {
 }
 
 export default App;
+
+
+
