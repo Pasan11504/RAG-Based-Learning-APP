@@ -459,3 +459,140 @@ INFO:root:Session ID: 4b839830-e3e1-43dc-b37a-abda81e750ca, AI Response: Unfortu
 As for me, I can tell you the date and time of my last update, which was in 2023. However, I don't have real-time access to the current date and time.
 
 If you want to know the current date and time, I recommend checking your device's clock or searching online for the latest information.
+INFO:root:Session ID: None, User Query: hi, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 92420d68-0f98-4250-9579-91a45a29bfcc, AI Response: Hello! I'm Vihanga, nice to meet you. How can I assist you today?
+INFO:root:Session ID: 92420d68-0f98-4250-9579-91a45a29bfcc, User Query: what can you do ? , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 92420d68-0f98-4250-9579-91a45a29bfcc, AI Response: I can be your personal assistant and help you with a wide range of tasks. Here are some examples of what I can do:
+
+1. **Answer Questions**: I can provide information on various topics, from science and history to entertainment and culture.
+2. **Generate Text**: I can create text based on a prompt or topic, and even help with writing and proofreading.
+3. **Translate Text**: I can translate text from one language to another.
+4. **Summarize Content**: I can summarize long pieces of text into shorter, more digestible versions.
+5. **Provide Definitions**: I can define words and phrases, and explain their meanings.
+6. **Offer Suggestions**: I can suggest ideas, solutions, and alternatives based on the context of our conversation.
+7. **Play Games**: I can play text-based games with you, such as 20 Questions, Hangman, and Word Jumble.
+8. **Help with Math**: I can assist with basic math calculations and equations.
+9. **Provide Technical Information**: I can provide information on technical topics, such as programming, computer hardware, and software.
+10. **Learn from You**: I can learn from your feedback and adapt to your needs and preferences.
+
+You can see that I was given some context information earlier about technical contributions and error details. If you'd like to know more about that, I'd be happy to help.
+
+What would you like to talk about or what task would you like me to assist you with?
+INFO:root:Session ID: 92420d68-0f98-4250-9579-91a45a29bfcc, User Query: what is this file is all about ? , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 92420d68-0f98-4250-9579-91a45a29bfcc, AI Response: Based on the context information you provided earlier, it seems like this file is related to a project or system that deals with document upload and processing.
+
+Specifically, it appears to be a specification document (FR2) that outlines the requirements for a system that can:
+
+1. Upload various types of documents (e.g., textbook PDFs, teacher guides, resource books, etc.)
+2. Extract text from these documents
+3. Clean and preprocess the extracted text
+4. Add metadata to the text chunks (e.g., grade, subject, chapter, page number)
+5. Store the original documents and the extracted text in a database
+
+The document also mentions some technical requirements, such as using specific tools for PDF extraction, OCR, text cleaning, and file storage.
+
+Later, it mentions another specification document (FR3) that deals with embedding and vector database, which seems to be a follow-up requirement that involves converting text chunks into numerical vectors and storing them in a vector database.
+
+Is that a correct understanding of the file's content?
+INFO:root:Session ID: 92420d68-0f98-4250-9579-91a45a29bfcc, User Query: no elaborate more, Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 92420d68-0f98-4250-9579-91a45a29bfcc, AI Response: Let me try to break down the file's content in more detail:
+
+**FR2: Document Upload and Processing**
+
+This section appears to be a detailed specification of the requirements for a system that can handle document upload and processing. The system is expected to perform the following tasks:
+
+1. **Upload Document**: The system should be able to upload various types of documents, including:
+	* Textbook PDFs
+	* Teacher guides
+	* Resource books
+	* Syllabus documents
+	* Model papers
+	* Marking schemes
+2. **Extract Text**: The system should be able to extract text from the uploaded documents. This implies that the system will use Optical Character Recognition (OCR) techniques to read the text from the documents, even if they are scanned or image-based.
+3. **Clean Text**: The extracted text will likely contain unwanted characters, such as page numbers, headers, or footers. The system should be able to clean the text by removing these unwanted characters.
+4. **Chunk Text**: The cleaned text should be broken down into smaller chunks, which can be used for further processing or analysis.
+5. **Add Metadata**: The system should be able to add metadata to the text chunks, including:
+	* Grade
+	* Subject
+	* Chapter
+	* Page number
+6. **Store Documents**: The system should store both the original documents and the extracted text in a database.
+
+**Technology Requirements**
+
+The specification mentions some specific technologies that should be used to implement the system:
+
+1. **PDF Extraction**: The system should use a library like PyMuPDF or pdfplumber to extract text from PDF documents.
+2. **OCR for Scanned Sinhala PDFs**: The system should use a library like Tesseract OCR or Google Vision API to extract text from scanned documents, including those in Sinhala language.
+3. **Text Cleaning**: The system should use Python regex and pandas to clean the extracted text.
+4. **Backend API**: The system should use a framework like FastAPI to build the backend API.
+5. **File Storage**: The system should use a storage solution like Local storage, S3, or Google Drive API to store the original documents and extracted text.
+
+**FR3: Embedding and Vector Database**
+
+This section appears to be a follow-up specification that builds on the requirements outlined in FR2. The system should be able to:
+
+1. **Generate Embeddings**: The system should be able to convert the text chunks into numerical vectors, which can be used for further analysis or machine learning tasks.
+2. **Store Embeddings in Vector Database**: The system should store the generated embeddings in a vector database, which can be used to retrieve similar documents or text chunks.
+
+Overall, these specifications seem to be outlining the requirements for a system that can handle document upload, processing, and embedding, with a focus on supporting Sinhala language documents.
+INFO:root:Session ID: 92420d68-0f98-4250-9579-91a45a29bfcc, User Query: can you understand sinhala language? , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: 92420d68-0f98-4250-9579-91a45a29bfcc, AI Response: I can recognize and respond to basic Sinhala words and phrases, but I'm not fluent in the language. I can understand some common Sinhala words and phrases, especially those related to everyday conversations, food, and basic phrases.
+
+However, my understanding of Sinhala is limited to:
+
+1. **Basic Phrases**: I can understand and respond to basic phrases like "\u0bb5\u0ba3\u0b95\u0bcd\u0b95\u0bae\u0bcd" (Vanakkam) - Hello, "\u0ba8\u0ba9\u0bcd\u0bb1\u0bbf" (Nandri) - Thank you, and "\u0bb5\u0ba3\u0b95\u0bcd\u0b95\u0bae\u0bcd" (Vanakkam) - Goodbye.
+2. **Food and Drink**: I can understand and respond to basic food and drink-related phrases like "\u0b95\u0b9f\u0bbe\u0baf\u0bcd" (Kadai) - Eggplant, "\u0baa\u0bbe\u0ba4\u0bbe\u0bae\u0bcd" (Padam) - Coconut, and "\u0ba4\u0bc7\u0ba8\u0bc0\u0bb0\u0bcd" (Theni) - Tea.
+3. **Common Words**: I can understand and respond to basic common words like "\u0bae\u0ba9\u0bbf\u0ba4\u0ba9\u0bcd" (Manithan) - Human, "\u0b95\u0bc1\u0bb4\u0ba8\u0bcd\u0ba4\u0bc8" (Kuzhandai) - Child, and "\u0baa\u0bc6\u0ba3\u0bcd" (Pen) - Woman.
+
+However, my understanding of Sinhala is limited to:
+
+1. **Romanization**: I can only understand Romanized Sinhala, which is written using the Latin alphabet.
+2. **Basic Conversations**: My understanding of Sinhala is limited to basic conversations, and I may not be able to understand more complex or nuanced conversations.
+3. **Grammar and Syntax**: My understanding of Sinhala grammar and syntax is limited, and I may not be able to understand more complex sentence structures.
+
+If you need help with a specific Sinhala-related task or question, feel free to ask, and I'll do my best to assist you!
+INFO:root:Session ID: None, User Query: what this project is all about ? what they are assigned to do ? , Model: llama-3.1-8b-instant
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:Session ID: a59978f2-13a1-4337-829d-ee2c0d41a86d, AI Response: Based on the context provided, this project appears to be about developing an educational platform or system that aims to assist teachers and students in various aspects of learning and assessment.
+
+The students are assigned to work on a 6-month project that involves developing a comprehensive educational platform. The project has been broken down into several development phases, which are:
+
+1. **Basic Prototype**: This phase involves creating a basic version of the platform that can extract text from PDF documents, create a vector database, and ask questions from the document.
+2. **Teacher Functions**: In this phase, the students are expected to develop features that cater to teachers, such as generating lesson plans, questions, and marking schemes.
+3. **Student Learning Functions**: This phase focuses on developing features that support student learning, including a chatbot, summaries, practice questions, and feedback.
+4. **Auto Marking**: In this phase, the students are tasked with developing an auto-marking system that uses rubrics to assess student answers and requires teacher approval.
+5. **Analytics**: The final phase involves developing analytics features, such as weak topic detection, student progress dashboards, and class-level reports.
+
+The project scope is recommended to be limited to:
+
+* One subject (e.g., Grade 8 Science or Grade 9 ICT)
+* Two document types (e.g., textbook and teacher guide)
+* Four core modules:
+	+ RAG chatbot
+	+ Lesson plan generation
+	+ Question generation
+	+ Auto marking
+
+Overall, the project aims to create a comprehensive educational platform that supports both teachers and students in their learning and assessment needs.
+WARNING:passlib.handlers.bcrypt:(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "C:\Users\vihan\OneDrive\Desktop\Projects\TaskMananger( FastAPI)\backend\venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+WARNING:passlib.handlers.bcrypt:(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "C:\Users\vihan\OneDrive\Desktop\Projects\TaskMananger( FastAPI)\backend\venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'

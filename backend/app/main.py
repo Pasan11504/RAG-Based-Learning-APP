@@ -91,3 +91,102 @@ def delete_document(request: DeleteFileRequest):
             return {"error": f"Deleted from Chroma but failed to delete document with file_id {request.file_id} from the database."}
     else:
         return {"error": f"Failed to delete document with file_id {request.file_id} from Chroma."}
+    
+
+
+# Import updates to add at the top of main.py
+from app.pydantic_models import (
+    UserRegisterInput, UserLoginInput, TokenResponse, 
+    ProfileUpdateInput, UserProfileResponse
+)
+from app.db_utils import register_user, get_user_by_email, get_user_by_id, update_user_profile
+from app.auth_utils import verify_password, create_access_token, get_current_user, RoleChecker
+from fastapi import Depends
+
+# ==============================================================================
+# USER REGISTRATION AND LOGIN ROUTERS
+# ==============================================================================
+
+@app.post("/auth/register")
+def register(user_data: UserRegisterInput):
+    """Registers a clean system account profile inside the MySQL framework database."""
+    if user_data.role.lower() not in ["admin", "teacher", "student", "evaluator"]:
+        raise HTTPException(status_code=400, detail="Invalid system role profile type assigned.")
+        
+    created_user = register_user(
+        name=user_data.name,
+        email=user_data.email,
+        plain_password=user_data.password,
+        role=user_data.role,
+        grade=user_data.grade,
+        subject=user_data.subject,
+        school=user_data.school,
+        preferred_language=user_data.preferred_language
+    )
+    if not created_user:
+        raise HTTPException(status_code=400, detail="An account with this email already exists.")
+        
+    return {"message": "User registered successfully.", "user_id": created_user.id}
+
+
+@app.post("/auth/login", response_model=TokenResponse)
+def login(credentials: UserLoginInput):
+    """Validates user account data against hashes and emits signed JWT active sessions."""
+    user = get_user_by_email(credentials.email)
+    if not user or not verify_password(credentials.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid account email or verification password.")
+        
+    # Inject user specifications explicitly into the signed payload
+    token_payload = {
+        "sub": user.id,
+        "email": user.email,
+        "role": user.role,
+        "grade": user.grade,
+        "subject": user.subject
+    }
+    token = create_access_token(data=token_payload)
+    
+    return TokenResponse(access_token=token, token_type="bearer", role=user.role)
+
+
+# ==============================================================================
+# PROFILE MANAGEMENT ROUTERS (SECURED)
+# ==============================================================================
+
+@app.get("/profile", response_model=UserProfileResponse)
+def get_profile(current_user: dict = Depends(get_current_user)):
+    """Fetches user details extracted from their valid active session token mapping context."""
+    user = get_user_by_id(current_user["user_id"])
+    if not user:
+        raise HTTPException(status_code=44, detail="User target reference account not found.")
+    return user
+
+
+@app.put("/profile", response_model=UserProfileResponse)
+def update_profile(profile_data: ProfileUpdateInput, current_user: dict = Depends(get_current_user)):
+    """Modifies custom fields belonging to the authentic active profile context."""
+    updated_user = update_user_profile(
+        user_id=current_user["user_id"],
+        name=profile_data.name,
+        grade=profile_data.grade,
+        subject=profile_data.subject,
+        school=profile_data.school,
+        preferred_language=profile_data.preferred_language
+    )
+    if not updated_user:
+        raise HTTPException(status_code=400, detail="Failed to patch requested target profile definitions.")
+    return updated_user
+
+
+# ==============================================================================
+# EXAMPLE OF ROLE-BASED ACCESS CONTROL (RBAC) IN ACTION
+# ==============================================================================
+
+# Protect your original /upload-doc endpoint so only Teachers or Admins can access it!
+@app.post("/upload-doc")
+def upload_and_index_document(
+    file: UploadFile = File(...), 
+    current_user: dict = Depends(RoleChecker(["admin", "teacher"])) # Locks endpoint to privileged identities
+):
+    # Keep your original file processing code exactly the same here...
+    pass
