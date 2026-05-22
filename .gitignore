@@ -11,3 +11,17 @@ dist/
 
 # OS files
 .DS_Store
+
+# Backend DB + vector store
+backend/chroma_db/
+backend/rag_app.db
+backend/app.log
+
+# Environment files
+backend/.env
+rag-frontend/.env
+
+# Node
+node_modules/
+dist/
+.vite/

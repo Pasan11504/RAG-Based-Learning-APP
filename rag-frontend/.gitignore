@@ -25,3 +25,7 @@ dist-ssr
 chroma_db/
 rag_app.db
 app.log
+backend/chroma_db/
+backend/rag_app.db
+backend/app.log
+
