@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+chroma_db/
+rag_app.db
+app.log

@@ -36,7 +36,8 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=[ "http://localhost:5173",
+        "http://127.0.0.1:5173"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -158,8 +159,14 @@ def upload_and_index_document(
             shutil.copyfileobj(file.file, buffer)
         
         file_id = insert_document_record(file.filename)
-        success = index_document_to_chroma(temp_file_path, file_id)
-        
+
+        try:
+            success = index_document_to_chroma(temp_file_path, file_id)
+        except Exception as e:
+            print("🔥 ERROR IN INDEXING:", e)
+            delete_document_record(file_id)
+            raise HTTPException(status_code=500, detail=str(e))
+
         if success:
             return {"message": f"File {file.filename} has been successfully uploaded and indexed.", "file_id": file_id}
         else:
