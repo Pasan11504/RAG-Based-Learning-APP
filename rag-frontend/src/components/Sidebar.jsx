@@ -47,8 +47,16 @@ const Sidebar = ({ model, setModel, documents, fetchDocs, userRole, userProfile,
       {/* Model Selection */}
       <div>
         <label className="block text-sm font-semibold mb-2">Selected Processing Model</label>
-        <select value={model} onChange={(e) => setModel(e.target.value)} className="w-full p-2 border rounded bg-white text-sm">
-          <option value="llama-3.1-8b-instant">LLaMA 3.1 8B Instant</option>
+        <select
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+          className="w-full p-2 border rounded"
+        >
+          <option value="llama-3.1-8b-instant">Groq – LLaMA 3.1 8B</option>
+          <option value="gemini-2.5-pro">Gemini 2.5 Pro </option>
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash (Best)</option>
+          <option value="gemini-2.0-flash">Gemini 2 Flash </option>
+          <option value="gemini-2.0-flash-lite">Gemini 2 Flash Lite </option>
         </select>
       </div>
 

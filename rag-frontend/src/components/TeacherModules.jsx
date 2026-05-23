@@ -29,7 +29,7 @@ const TeacherModules = ({ documents, model }) => {
     setLoading(true);
     setLessonOutput('');
     try {
-      const data = await generateLessonPlan(selectedFileId, lessonTopic, lessonDuration);
+      const data = await generateLessonPlan(selectedFileId, lessonTopic, lessonDuration, model);
       setLessonOutput(data.lesson_plan);
     } catch (error) {
       alert(error.message);
@@ -43,7 +43,7 @@ const TeacherModules = ({ documents, model }) => {
     setLoading(true);
     setQuizOutput('');
     try {
-      const data = await generateTextbookQuizApi(selectedFileId, quizQuestionType, quizNumQuestions);
+      const data = await generateTextbookQuizApi(selectedFileId, quizQuestionType, quizNumQuestions, model);
       setQuizOutput(data.quiz);
     } catch (error) {
       alert(error.message);

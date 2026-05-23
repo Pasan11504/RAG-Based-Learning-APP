@@ -4,6 +4,8 @@ import ChatInterface from './components/ChatInterface';
 import TeacherModules from './components/TeacherModules';
 import AuthPortal from './components/AuthPortal';
 import { listDocuments, getUserProfile } from './api';
+import StudentModules from './components/StudentModules';
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -14,6 +16,8 @@ function App() {
   const [sessionId, setSessionId] = useState(null);
   const [documents, setDocuments] = useState([]);
   const [activeTab, setActiveTab] = useState('chat'); // Toggle for teachers: 'chat' or 'tools'
+  const [studentTab, setStudentTab] = useState('chat');
+
 
   const fetchDocs = async () => {
     try {
@@ -68,6 +72,8 @@ function App() {
   }
 
   const showTeacherWorkspace = userRole === 'teacher' || userRole === 'admin';
+  const showStudentWorkspace = userRole === 'student';
+
 
   return (
     <div className="flex h-screen w-full font-sans overflow-hidden bg-white">
@@ -94,16 +100,57 @@ function App() {
           </div>
         )}
 
-        {/* View Switcher Engine */}
-        {activeTab === 'tools' && showTeacherWorkspace ? (
-          <TeacherModules documents={documents} model={model} />
-        ) : (
-          <ChatInterface 
-            model={model} 
-            sessionId={sessionId} 
-            setSessionId={setSessionId} 
-          />
+        {showStudentWorkspace && (
+          <div className="bg-gray-50 border-b px-6 py-2 flex gap-4">
+            <button 
+              onClick={() => setStudentTab('chat')}
+              className={`px-4 py-2 font-bold text-sm rounded-lg transition-colors ${
+                studentTab === 'chat' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              💬 Ask Chatbot
+            </button>
+
+            <button 
+              onClick={() => setStudentTab('learn')}
+              className={`px-4 py-2 font-bold text-sm rounded-lg transition-colors ${
+                studentTab === 'learn' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              📘 Student Learning Tools
+            </button>
+          </div>
         )}
+
+
+        {/* View Switcher Engine */}
+        {/* TEACHER VIEW */}
+        {showTeacherWorkspace && (
+          activeTab === 'tools' ? (
+            <TeacherModules documents={documents} model={model} />
+          ) : (
+            <ChatInterface 
+              model={model} 
+              sessionId={sessionId} 
+              setSessionId={setSessionId} 
+            />
+          )
+        )}
+
+        {/* STUDENT VIEW */}
+        {showStudentWorkspace && (
+          studentTab === 'learn' ? (
+            <StudentModules documents={documents} model={model} />
+          ) : (
+            <ChatInterface 
+              model={model} 
+              sessionId={sessionId} 
+              setSessionId={setSessionId} 
+            />
+          )
+        )}
+
+
       </div>
     </div>
   );
