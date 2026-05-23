@@ -3,7 +3,7 @@ import uuid
 import logging
 import shutil
 from fastapi import FastAPI, File, UploadFile, HTTPException, Depends
-from app.langchain_utils import get_rag_chain, generate_textbook_lesson_plan, generate_textbook_quiz, evaluate_student_script
+from app.langchain_utils import get_rag_chain, generate_textbook_lesson_plan, generate_textbook_quiz, evaluate_student_script, generate_student_summary, generate_student_practice_questions, evaluate_student_answers
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
@@ -20,7 +20,8 @@ from app.pydantic_models import (
     QueryInput, QueryResponse, DocumentInfo, DeleteFileRequest,
     UserRegisterInput, UserLoginInput, TokenResponse, 
     ProfileUpdateInput, UserProfileResponse, LessonPlanRequest,
-    QuizGenerationRequest
+    QuizGenerationRequest,
+    StudentSummaryRequest, StudentPracticeRequest, StudentAnswerCheckRequest
 )
 from app.langchain_utils import get_rag_chain, generate_textbook_lesson_plan, generate_textbook_quiz
 from app.db_utils import (
@@ -125,7 +126,7 @@ def update_profile(profile_data: ProfileUpdateInput, current_user: dict = Depend
 def chat(query_input: QueryInput, current_user: dict = Depends(get_current_user)):
     """Handles conversational chat loops utilizing active user context validation."""
     session_id = query_input.session_id
-    logging.info(f"Session ID: {session_id}, User Query: {query_input.question}, Model: {query_input.model.value}")
+    logging.info(f"Session ID: {session_id}, User Query: {query_input.question}, Model: {query_input.model}")
     if not session_id:
         session_id = str(uuid.uuid4())
 
@@ -211,7 +212,8 @@ def generate_lesson(
         plan_markdown = generate_textbook_lesson_plan(
             file_id=payload.file_id,
             topic=payload.topic,
-            duration=payload.duration_minutes
+            duration=payload.duration_minutes,
+            model=payload.model
         )
         return {"status": "success", "lesson_plan": plan_markdown}
     except Exception as e:
@@ -232,7 +234,8 @@ def create_quiz(
         quiz_markdown = generate_textbook_quiz(
             file_id=payload.file_id,
             question_type=payload.question_type,
-            num_questions=payload.num_questions
+            num_questions=payload.num_questions,
+            model=payload.model
         )
         return {"status": "success", "quiz": quiz_markdown}
     except Exception as e:
@@ -259,10 +262,35 @@ def auto_mark_script(
             question=payload.question_text,
             model_answer=payload.model_answer,
             student_answer=payload.student_answer,
-            max_marks=payload.max_marks
+            max_marks=payload.max_marks,
+            model=payload.model
         )
         # Wrap response into an evaluation object matching your React state listener expectation
         return {"status": "success", "evaluation": {"score": evaluation_report, "confidence_score": 0.95, "feedback": "Detailed sheet compiled below.", "missing_points": []}}
     except Exception as e:
         logging.error(f"Automated script evaluation failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to process answer evaluation: {str(e)}")
+    
+@app.post("/student-summary")
+def student_summary(payload: StudentSummaryRequest):
+    summary = generate_student_summary(
+        file_id=payload.file_id,
+        model=payload.model
+    )
+    return {"summary": summary}
+
+@app.post("/student-practice")
+def student_practice(payload: StudentPracticeRequest):
+    quiz = generate_student_practice_questions(
+        file_id=payload.file_id,
+        num_questions=payload.num_questions,
+        model=payload.model
+    )
+    return {"questions": quiz}
+
+
+@app.post("/student-check-answers")
+def student_check(payload: StudentAnswerCheckRequest):
+    results = evaluate_student_answers(payload)
+    return {"results": results}
+

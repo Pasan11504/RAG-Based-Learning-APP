@@ -80,7 +80,7 @@ import os
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from sqlmodel import Field, SQLModel, create_engine, Session, select
-
+from sqlalchemy import Column, Text
 # ==========================================
 # 1. DATABASE CONNECTION SETUP
 # ==========================================
@@ -113,11 +113,10 @@ class ApplicationLog(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     session_id: str = Field(index=True)
-    user_query: str = Field(max_length=4000)
-    gpt_response: str = Field(max_length=4000)
+    user_query: str = Field(sa_column=Column(Text))       # allow long questions
+    gpt_response: str = Field(sa_column=Column(Text))     # FIXED: unlimited length
     model: str = Field(max_length=50)
     created_at: datetime = Field(default_factory=datetime.utcnow)
-
 class DocumentStore(SQLModel, table=True):
     """Tracks uploaded files and metadata."""
     __tablename__ = "document_store"
