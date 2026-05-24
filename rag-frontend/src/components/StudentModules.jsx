@@ -33,28 +33,77 @@ const StudentModules = ({ documents, model }) => {
     setLoading(false);
   };
 
-  const handlePractice = async () => {
+const handlePractice = async () => {
   if (!selectedFileId) return alert("Select a resource first.");
 
   setLoading(true);
   try {
     const data = await generateStudentPractice(selectedFileId, numQuestions, model);
 
-    console.log("PRACTICE RESPONSE:", data); // ✅ NOW data exists
+    console.log("PRACTICE RESPONSE:", data);
 
-    if (!data || !Array.isArray(data.questions)) {
+    let questionsArray = [];
+
+    // Case 1: Gemini returns raw array
+    if (Array.isArray(data)) {
+      questionsArray = data.map(q => ({
+        question: typeof q === "string" ? q : q.question,
+        correct_answer: q.correct_answer || "",
+        explanation: q.explanation || ""
+      }));
+    }
+
+    // Case 2: Groq or Gemini returns { questions: ... }
+    else if (data.questions) {
+
+      let inner = data.questions;
+
+      // Case 2A: Groq → { questions: [ ... ] }
+      if (Array.isArray(inner)) {
+        questionsArray = inner.map(q => ({
+          question: typeof q === "string" ? q : q.question,
+          correct_answer: q.correct_answer || "",
+          explanation: q.explanation || ""
+        }));
+      }
+
+      // Case 2B: Gemini nested → { questions: { questions: [ ... ] } }
+      else if (Array.isArray(inner.questions)) {
+        questionsArray = inner.questions.map(q => ({
+          question: typeof q === "string" ? q : q.question,
+          correct_answer: q.correct_answer || "",
+          explanation: q.explanation || ""
+        }));
+      }
+
+      // Case 2C: Single object
+      else {
+        const q = inner;
+        questionsArray = [{
+          question: typeof q === "string" ? q : q.question,
+          correct_answer: q.correct_answer || "",
+          explanation: q.explanation || ""
+        }];
+      }
+    }
+
+    else {
       alert("Invalid response from server.");
       return;
     }
 
-    setPracticeQuestions(data.questions);
-    setStudentAnswers(Array(data.questions.length).fill(""));
+    setPracticeQuestions(questionsArray);
+    setStudentAnswers(Array(questionsArray.length).fill(""));
     setFeedback([]);
+
   } catch (err) {
     alert(err.message);
   }
   setLoading(false);
 };
+
+
+
 
   const handleCheckAnswers = async () => {
     setShowPopup(true);

@@ -76,7 +76,7 @@ function App() {
 
 
   return (
-    <div className="flex h-screen w-full font-sans overflow-hidden bg-white">
+  <div className="flex h-screen w-full font-sans bg-white">
       <Sidebar 
         model={model} 
         setModel={setModel} 
@@ -87,7 +87,7 @@ function App() {
         onLogout={handleLogout}
       />
       
-      <div className="flex-1 flex flex-col min-w-0 h-full">
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
         {/* Workspace Routing Control Bar */}
         {showTeacherWorkspace && (
           <div className="bg-gray-50 border-b px-6 py-2 flex gap-4">
