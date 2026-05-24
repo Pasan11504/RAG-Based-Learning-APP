@@ -9,6 +9,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_core.documents import Document
 from app.chroma_utils import vectorstore
+from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 # ============================================================
 # 1. LLM SELECTOR (Gemini primary, Groq fallback)
@@ -41,34 +42,7 @@ retriever = vectorstore.as_retriever(search_kwargs={"k": 2})
 def format_docs(docs: List[Document]):
     return "\n\n".join(doc.page_content for doc in docs)
 
-# ============================================================
-# 3. CONTEXTUAL QUESTION REFORMULATION
-# ============================================================
 
-contextualize_q_system_prompt = (
-    "Given a chat history and the latest user question "
-    "which might reference context in the chat history, "
-    "formulate a standalone question which can be understood "
-    "without the chat history. Do NOT answer the question, "
-    "just reformulate it if needed and otherwise return it as is."
-)
-
-""" contextualize_q_prompt = ChatPromptTemplate.from_messages([
-    ("system", contextualize_q_system_prompt),
-    MessagesPlaceholder("chat_history"),
-    ("human", "{input}"),
-]) """
-
-# ============================================================
-# 4. QA PROMPT
-# ============================================================
-
-""" qa_prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful AI assistant. Use the following context to answer the user's question."),
-    ("system", "Context: {context}"),
-    MessagesPlaceholder(variable_name="chat_history"),
-    ("human", "{input}")
-]) """
 
 # ============================================================
 # 5. FULL HISTORY-AWARE RAG CHAIN (Gemini-compatible)
@@ -78,58 +52,57 @@ def get_rag_chain(model="llama-3.1-8b-instant"):
     llm = get_llm(model)
     model_l = model.lower()
 
-    # ============================
-    # 1. MODEL-SPECIFIC PROMPTS
-    # ============================
+    # ---------- Contextualization prompt ----------
+    contextualize_q_system = (
+        "පෙර සංවාදය නොසලකා නව ප්‍රශ්නය ස්වාධීන ලෙස නැවත ලියන්න. "
+        "පිළිතුර නොදෙන්න. Sinhala භාෂාවෙන් පමණක්."
+    )
 
-    # Gemini cannot accept system messages inside chat history
     if "gemini" in model_l:
         contextualize_q_prompt = ChatPromptTemplate.from_messages([
-            ("system", contextualize_q_system_prompt),
-            ("human", "{input}"),
-        ])
-
-        qa_prompt_local = ChatPromptTemplate.from_messages([
-            ("system", "You are a helpful AI assistant. Use the following context to answer the user's question."),
-            ("Context: {context}"),
+            ("system", contextualize_q_system),
             ("human", "{input}")
         ])
 
-    # Groq (LLaMA) supports full history
+        qa_prompt_local = ChatPromptTemplate.from_messages([
+            ("system",
+             "ඔබ Sinhala භාෂාවෙන් පමණක් පිළිතුරු දෙන AI උපකාරකයෙකි. "
+             "පහත context එකේ තොරතුරු පමණක් භාවිතා කරන්න. "
+             "බාහිර දත්ත නොයොදන්න.\n\nContext:\n{context}"),
+            ("human", "{input}")
+        ])
     else:
         contextualize_q_prompt = ChatPromptTemplate.from_messages([
-            ("system", contextualize_q_system_prompt),
+            ("system", contextualize_q_system),
             MessagesPlaceholder("chat_history"),
-            ("human", "{input}"),
+            ("human", "{input}")
         ])
 
         qa_prompt_local = ChatPromptTemplate.from_messages([
-            ("system", "You are a helpful AI assistant. Use the following context to answer the user's question."),
-            ("system", "Context: {context}"),
+            ("system",
+             "ඔබ Sinhala භාෂාවෙන් පමණක් පිළිතුරු දෙන AI උපකාරකයෙකි. "
+             "පහත context එකේ තොරතුරු පමණක් භාවිතා කරන්න. "
+             "බාහිර දත්ත නොයොදන්න."),
+            ("system", "Context:\n{context}"),
             MessagesPlaceholder("chat_history"),
             ("human", "{input}")
-        ]) 
-
-    # ============================
-    # 2. CONTEXTUALIZATION CHAIN
-    # ============================
+        ])
 
     contextualize_chain = contextualize_q_prompt | llm | StrOutputParser()
 
     history_aware_retriever = (
         RunnablePassthrough.assign(
             input=lambda x: contextualize_chain.invoke(
-                {"input": x["input"], "chat_history": x.get("chat_history", [])}
+                {
+                    "input": x["input"],
+                    "chat_history": x.get("chat_history", [])
+                }
             ) if x.get("chat_history") else x["input"]
         )
         | (lambda x: retriever.invoke(x["input"]))
     )
 
-    # ============================
-    # 3. FINAL RAG CHAIN
-    # ============================
-
-    lcel_rag_chain = (
+    rag_chain = (
         RunnablePassthrough.assign(
             context=lambda x: format_docs(
                 history_aware_retriever.invoke({
@@ -143,7 +116,9 @@ def get_rag_chain(model="llama-3.1-8b-instant"):
         | StrOutputParser()
     )
 
-    return lcel_rag_chain | RunnableLambda(lambda text: {"answer": text})
+    return rag_chain | RunnableLambda(lambda text: {"answer": text})
+
+
 
 
 
@@ -155,28 +130,24 @@ def generate_textbook_lesson_plan(file_id: int, topic: str, duration: int, model
     llm = get_llm(model)
 
     retr = vectorstore.as_retriever(
-        search_kwargs={"k": 4, "filter": {"file_id": int(file_id)}}
+        search_kwargs={"k": 2, "filter": {"file_id": int(file_id)}}
     )
 
-    search_query = f"Core concepts, key terms, definitions, formulas, and main subtopics about {topic}"
-    docs = retr.invoke(search_query)
+    docs = retr.invoke(f"{topic} main ideas")
     context_text = format_docs(docs)
 
     lesson_prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are an expert school curriculum developer and master teacher.\n"
-                   "Create a highly professional, detailed lesson plan for a {duration}-minute class period "
-                   "based ONLY on the provided textbook context below.\n\n"
-                   "The lesson plan MUST include these exact sections with clear formatting:\n"
-                   "1. LESSON OVERVIEW & SUMMARY\n"
-                   "2. CORE INTELLECTUAL OBJECTIVES (What students will know/do)\n"
-                   "3. DETAILED TIMELINE BREAKDOWN (Allocate specific minutes for: Introduction, Core Content Delivery, Student Activity, Assessment/Wrap-up)\n"
-                   "4. CONTEXTUAL ASSESSMENT QUESTIONS (Directly matching the text numbers)\n\n"
-                   "Context from textbook:\n{context}"),
-        ("human", "Compile a detailed lesson plan for the topic: {topic}")
+        ("system",
+         "ඔබ Sinhala පාසල් ගුරුවරයෙකි. "
+         "පහත context භාවිතා කරමින් {duration} මිනිත්තු පාඩම් සැලැස්මක් සකසන්න. "
+         "අවශ්‍ය කොටස්: සාරාංශය, ඉලක්ක, ක්‍රියාදාමය, ප්‍රශ්න."),
+        ("human",
+         "Topic: {topic}\n\nContext:\n{context}")
     ])
 
     chain = lesson_prompt | llm | StrOutputParser()
     return chain.invoke({"duration": duration, "context": context_text, "topic": topic})
+
 
 
 # ============================================================
@@ -187,23 +158,19 @@ def generate_textbook_quiz(file_id: int, question_type: str, num_questions: int,
     llm = get_llm(model)
 
     retr = vectorstore.as_retriever(
-        search_kwargs={"k": 5, "filter": {"file_id": int(file_id)}}
+        search_kwargs={"k": 2, "filter": {"file_id": int(file_id)}}
     )
 
-    search_query = "Important concepts, definitions, and facts for making questions"
-    docs = retr.invoke(search_query)
+    docs = retr.invoke("important concepts for quiz")
     context_text = format_docs(docs)
 
     quiz_prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are an expert school examiner and evaluation officer.\n"
-                   "Create a test paper with exactly {num_questions} {q_type} questions based ONLY on the provided textbook context below.\n\n"
-                   "CRITICAL FORMATTING RULES:\n"
-                   "- Provide the QUESTIONS section first.\n"
-                   "- If the type is 'MCQ', each question must have 4 distinct options (A, B, C, D).\n"
-                   "- Provide an ANSWER KEY section at the very end with clear explanations tied directly to the text context.\n"
-                   "- Do not include outside facts or unverified assumptions.\n\n"
-                   "Textbook Context:\n{context}"),
-        ("human", "Generate the test paper now.")
+        ("system",
+         "ඔබ විභාග ප්‍රශ්න සකස් කරන AI ය. "
+         "Sinhala භාෂාවෙන් {num_questions} {q_type} ප්‍රශ්න සකසන්න. "
+         "Context පමණක් භාවිතා කරන්න."),
+        ("human",
+         "Context:\n{context}\n\nප්‍රශ්න සකසන්න.")
     ])
 
     chain = quiz_prompt | llm | StrOutputParser()
@@ -217,20 +184,12 @@ def evaluate_student_script(question: str, model_answer: str, student_answer: st
     llm = get_llm(model)
 
     evaluation_prompt = ChatPromptTemplate.from_messages([
-                ("system", "You are an objective academic evaluator grading a secondary school student's answer script.\n"
-                   "Compare the student's answer against the benchmark model answer provided.\n\n"
-                   "CRITICAL GRADING CRITERIA:\n"
-                   "- Grade strictly out of {max_marks} maximum marks.\n"
-                   "- Deduct marks fairly if core terms, definitions, or key causal concepts are missing.\n"
-                   "- Do not penalize grammar issues unless they completely alter the scientific or factual accuracy.\n\n"
-                   "Your output must be a clean markdown report containing exactly these sections:\n"
-                   "### SCORE: [Awarded Marks] / {max_marks}\n"
-                   "### AI CERTAINTY: [Value between 80% and 100%]\n"
-                   "### CONSTRUCTIVE FEEDBACK: [Explain why the score was given]\n"
-                   "- Omitted Conceptual Variables: [List any key ideas, words, or facts the student missed from the model answer]"),
-        ("human", "Question: {question}\n\n"
-                  "Benchmark Model Answer: {model_answer}\n\n"
-                  "Student's Submitted Answer: {student_answer}")
+        ("system",
+         "ඔබ නිර්පක්ෂ විභාග නිර්ණායකයෙකි. "
+         "Sinhala භාෂාවෙන් {max_marks} න් ලකුණු දෙන්න. "
+         "ලකුණු, විශ්වාසය, හේතුව, මඟහැර ගිය කරුණු ලබා දෙන්න."),
+        ("human",
+         "Question: {question}\n\nModel Answer: {model_answer}\n\nStudent Answer: {student_answer}")
     ])
 
     chain = evaluation_prompt | llm | StrOutputParser()
@@ -242,64 +201,278 @@ def evaluate_student_script(question: str, model_answer: str, student_answer: st
         "student_answer": student_answer
     })
 
+
 #SUMMARY GENERATOR
 def generate_student_summary(file_id: int, model: str):
     llm = get_llm(model)
 
     retr = vectorstore.as_retriever(
-        search_kwargs={"k": 3, "filter": {"file_id": file_id}}
+        search_kwargs={"k": 2, "filter": {"file_id": file_id}}
     )
 
-    docs = retr.invoke("Main ideas, definitions, key points")
+    docs = retr.invoke("summary main ideas")
     context = format_docs(docs)
 
     prompt = ChatPromptTemplate.from_messages([
-        ("system", "Explain the following content in simple language suitable for a student.\n\n{context}"),
-        ("human", "Give me a short summary.")
+        ("system", "Context එක සරල Sinhala භාෂාවෙන් සාරාංශ කරන්න."),
+        ("human", "{context}")
     ])
 
     chain = prompt | llm | StrOutputParser()
     return chain.invoke({"context": context})
 
+
 #PRACTICE QUESTION GENERATOR
-def generate_student_practice_questions(file_id: int, num_questions: int, model: str):
+# def generate_student_practice_questions(file_id: int, num_questions: int, model: str):
+#     llm = get_llm(model)
+#     model_l = model.lower()
+
+#     retr = vectorstore.as_retriever(
+#         search_kwargs={"k": 2, "filter": {"file_id": file_id}}
+#     )
+
+#     docs = retr.invoke("practice question concepts")
+#     context = format_docs(docs)
+
+#     # ============================================================
+#     # 1. STRICT GEMINI PROMPT (escaped braces)
+#     # ============================================================
+#     if "gemini" in model_l:
+#         prompt = ChatPromptTemplate.from_messages([
+#             ("system",
+#             f"""
+#             You MUST output ONLY VALID JSON.
+
+#             Follow this EXACT SCHEMA:
+
+#             {{{{ 
+#             "questions": [
+#                 {{{{ 
+#                 "question": "string",
+#                 "correct_answer": "string",
+#                 "explanation": "string"
+#                 }}}}
+#             ]
+#             }}}}
+
+#             RULES:
+#             - Output ONLY JSON.
+#             - No Markdown.
+#             - No ``` fences.
+#             - No text before or after JSON.
+#             - MUST include exactly {num_questions} items in "questions".
+#             - All fields MUST exist.
+#             - All values MUST be strings.
+#             - Use ONLY the provided context.
+#             """
+#             )
+# ,
+#             (("human",
+#             "Context:\n{context}\n\nGenerate the JSON now.")
+#             )
+#         ])
+
+#     # ============================================================
+#     # 2. GROQ PROMPT (already stable)
+#     # ============================================================
+#     else:
+#         prompt = ChatPromptTemplate.from_messages([
+#             ("system",
+#              "Sinhala භාෂාවෙන් VALID JSON array එකක් පමණක් ලබා දෙන්න. "
+#              "JSON පිටත කිසිවක් නොලියන්න. "
+#              "Array object keys: question, correct_answer, explanation. "
+#              "Context පමණක් භාවිතා කරන්න."),
+#             ("human",
+#              "Context:\n{context}\n\n"
+#              f"{num_questions} ප්‍රශ්න JSON array එකක් ලෙස සකසන්න. "
+#              "JSON පමණක් output කරන්න.")
+#         ])
+
+#     # ============================================================
+#     # 3. RUN CHAIN
+#     # ============================================================
+#     chain = prompt | llm | StrOutputParser()
+#     raw = chain.invoke({"num_questions": num_questions, "context": context})
+
+#     # ============================================================
+#     # 4. CLEAN JSON
+#     # ============================================================
+#     cleaned = raw.replace("```json", "").replace("```", "").replace("```JSON", "")
+#     cleaned = cleaned.strip()
+
+#     # Try direct JSON
+#     try:
+#         return json.loads(cleaned)
+#     except:
+#         pass
+
+#     # Extract array only
+#     try:
+#         array_part = cleaned[cleaned.find('['): cleaned.rfind(']') + 1]
+#         return json.loads(array_part)
+#     except:
+#         pass
+
+#     # Wrap as array
+#     try:
+#         return json.loads(f"[{cleaned}]")
+#     except:
+#         raise ValueError("Model did not return valid JSON:\n" + raw)
+
+
+
+def generate_student_practice_questions_groq(file_id: int, num_questions: int, model: str):
     llm = get_llm(model)
 
     retr = vectorstore.as_retriever(
-        search_kwargs={"k": 4, "filter": {"file_id": file_id}}
+        search_kwargs={"k": 1, "filter": {"file_id": file_id}}
     )
 
-    docs = retr.invoke("Important concepts for practice questions")
-    context = format_docs(docs)
+    docs = retr.invoke("generate practice questions")
+    material = format_docs(docs)
+    material = material[:2000]
+
+    system_prompt = f"""
+You MUST output ONLY JSON.
+
+FORMAT (MANDATORY):
+Return an object with a key named "questions".
+"questions" must be an array.
+Each array item must contain:
+- question
+- correct_answer
+- explanation
+
+RULES:
+- NEVER return a list of strings.
+- ALWAYS return objects.
+- ALWAYS include correct_answer and explanation.
+- Use Sinhala only.
+- Output ONLY JSON.
+"""
+
+    human_prompt = f"""
+Study Material:
+{material}
+
+Generate {num_questions} Sinhala practice questions now.
+"""
 
     prompt = ChatPromptTemplate.from_messages([
-        ("system",
-         "You MUST return ONLY valid JSON.\n"
-         "Format: [\n"
-         "  {{\n"
-         "    \"question\": \"...\",\n"
-         "    \"correct_answer\": \"...\",\n"
-         "    \"explanation\": \"...\"\n"
-         "  }}\n"
-         "]\n"
-         "No text before or after the JSON.\n"
-         "Create {num_questions} simple practice questions.\n"
-         "Context:\n{context}"
-        ),
-        ("human", "Generate now.")
+        ("system", system_prompt),
+        ("human", human_prompt)
     ])
 
-    chain = prompt | llm | StrOutputParser()
-    raw = chain.invoke({"num_questions": num_questions, "context": context})
+    chain = prompt | llm
 
-    # Try parsing JSON
+    raw = chain.invoke({})
+
+    raw_text = raw.content if hasattr(raw, "content") else raw
+
     try:
-        return json.loads(raw)
+        data = json.loads(raw_text)
     except:
-        match = re.search(r'\[.*\]', raw, re.DOTALL)
-        if not match:
-            raise ValueError("Model did not return valid JSON.")
-        return json.loads(match.group(0))
+        data = {"questions": []}
+
+    normalized = []
+    for q in data.get("questions", []):
+        if isinstance(q, str):
+            normalized.append({
+                "question": q,
+                "correct_answer": "",
+                "explanation": ""
+            })
+        else:
+            normalized.append({
+                "question": q.get("question", ""),
+                "correct_answer": q.get("correct_answer", ""),
+                "explanation": q.get("explanation", "")
+            })
+
+    return {"questions": normalized}
+
+def generate_student_practice_questions_gemini(file_id: int, num_questions: int):
+    llm = get_llm("gemini")   # or however you select Gemini
+
+    retr = vectorstore.as_retriever(
+        search_kwargs={"k": 1, "filter": {"file_id": file_id}}
+    )
+
+    docs = retr.invoke("generate practice questions")
+    material = format_docs(docs)
+    material = material[:1800]   # Gemini is sensitive to long context
+
+    system_prompt = """
+You MUST output ONLY valid JSON.
+
+Output format:
+- Return an object with a key "questions".
+- "questions" must be an array.
+- Each item must be an object with:
+  - "question": string
+  - "correct_answer": string
+  - "explanation": string
+
+Rules:
+- Do NOT output anything except JSON.
+- Do NOT output browser metadata.
+- Do NOT output system info.
+- Do NOT output empty arrays.
+- Do NOT output strings inside the array.
+- ALWAYS fill all three fields.
+"""
+
+    human_prompt = f"""
+Study Material:
+{material}
+
+Generate {num_questions} Sinhala practice questions.
+Return ONLY JSON.
+"""
+
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", system_prompt),
+        ("human", human_prompt)
+    ])
+
+    chain = prompt | llm
+    raw = chain.invoke({})
+
+    raw_text = raw.content if hasattr(raw, "content") else raw
+
+    try:
+        data = json.loads(raw_text)
+    except:
+        data = {"questions": []}
+
+    normalized = []
+    for q in data.get("questions", []):
+        if isinstance(q, dict):
+            normalized.append({
+                "question": q.get("question", ""),
+                "correct_answer": q.get("correct_answer", ""),
+                "explanation": q.get("explanation", "")
+            })
+        else:
+            normalized.append({
+                "question": str(q),
+                "correct_answer": "",
+                "explanation": ""
+            })
+
+    return {"questions": normalized}
+
+def generate_student_practice_questions(file_id: int, num_questions: int, model: str):
+    model = model.lower()
+
+    if "gemini" in model:
+        return generate_student_practice_questions_gemini(file_id, num_questions)
+
+    # default → Groq
+    return generate_student_practice_questions_groq(file_id, num_questions, model)
+
+
+
 
 
 
@@ -319,7 +492,7 @@ def evaluate_student_answers(payload):
             "student_answer": student,
             "correct_answer": correct,
             "is_correct": is_correct,
-            "explanation": exp
+            "explanation": f"Sinhala: {exp}"
         })
 
     return results
